@@ -1,0 +1,104 @@
+// 직관 가계부 스키마
+// - 금액은 모두 Int(원 단위)
+// - DateTime은 UTC로 저장하고, 날짜/연도/월 판단은 Asia/Seoul 기준으로 계산한다 (src/lib/kst.ts)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum TeamCode {
+  LG
+  KT
+  SSG
+  NC
+  DOOSAN
+  KIA
+  LOTTE
+  SAMSUNG
+  HANWHA
+  KIWOOM
+}
+
+enum GameStatus {
+  SCHEDULED
+  FINAL
+  CANCELED
+}
+
+enum AttendanceResult {
+  WIN
+  LOSS
+  DRAW
+}
+
+enum ExpenseCategory {
+  TICKET
+  TRANSPORT
+  FOOD
+  GOODS
+  ETC
+}
+
+model User {
+  id           String       @id @default(cuid())
+  name         String
+  favoriteTeam TeamCode?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  attendances  Attendance[]
+}
+
+model Game {
+  id          String       @id @default(cuid())
+  // KBO 원천 데이터의 경기 식별자 (upsert 키)
+  externalId  String       @unique
+  startsAt    DateTime
+  stadium     String
+  homeTeam    TeamCode
+  awayTeam    TeamCode
+  homeScore   Int?
+  awayScore   Int?
+  status      GameStatus   @default(SCHEDULED)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  attendances Attendance[]
+
+  @@index([startsAt])
+}
+
+model Attendance {
+  id         String            @id @default(cuid())
+  userId     String
+  gameId     String
+  cheerTeam  TeamCode
+  seat       String?
+  companions String?
+  result     AttendanceResult?
+  memo       String?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game       Game              @relation(fields: [gameId], references: [id], onDelete: Restrict)
+  expenses   Expense[]
+
+  @@unique([userId, gameId])
+  @@index([userId])
+}
+
+model Expense {
+  id           String          @id @default(cuid())
+  attendanceId String
+  category     ExpenseCategory
+  amount       Int
+  memo         String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  attendance   Attendance      @relation(fields: [attendanceId], references: [id], onDelete: Cascade)
+
+  @@index([attendanceId])
+}
