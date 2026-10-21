@@ -30,6 +30,24 @@ npm run dev
 현재는 자리표시자다(`src/lib/auth.ts`). `jigkwan_uid` 쿠키의 사용자 ID를 현재 사용자로 보고,
 쿠키가 없으면 개발 환경(또는 `DEMO_USER=1`)에서 가장 먼저 만들어진 사용자를 사용한다.
 
+## 환경 변수
+
+| 이름 | 설명 |
+| --- | --- |
+| `DATABASE_URL` | SQLite 파일 경로 (`file:./dev.db`) |
+| `SHARE_SECRET` | 공유 링크 서명 비밀값. 운영 환경에서는 필수 |
+| `SITE_URL` | 배포 주소. 공유 링크 미리보기(og:image)의 절대 URL 기준 |
+| `DEMO_USER` | `1`이면 운영 빌드에서도 데모 사용자·개발용 서명값 사용 (로컬 확인용) |
+
+## 연간 리포트
+
+- 집계: `src/lib/reports/annual.ts` (순수 함수, 단위 테스트 `annual.test.ts`)
+- API: `GET /api/reports/annual?year=YYYY` (생략 시 KST 기준 올해)
+- 화면: `/report?year=YYYY` (홈에서 진입)
+- 공유 카드: `GET /api/reports/annual/card?year=YYYY` (1080×1920 PNG, 로그인 사용자)
+- 공유 링크: `/share/{token}` (서명된 토큰, 로그인 불필요), 카드 이미지 `/share/{token}/image`
+- 카드 한글 폰트는 `pretendard` 패키지(OFL)의 OTF를 런타임에 읽는다
+
 ## API 응답 형식
 
 성공 시 `{ "data": ... }`, 실패 시 `{ "error": { "code": "...", "message": "..." } }`.
