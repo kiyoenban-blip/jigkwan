@@ -324,3 +324,48 @@
     opacity: 0.5;
   }
 }
+
+/* 공유 */
+.sharePreview {
+  display: block;
+  width: 160px;
+  height: auto;
+  aspect-ratio: 9 / 16;
+  margin: 0 auto 12px;
+  border-radius: 12px;
+  background: var(--border);
+}
+
+.shareButtons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.shareButton {
+  min-height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.shareButton:first-child {
+  border-color: transparent;
+  background: var(--text);
+  color: var(--bg);
+}
+
+.shareButton:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.shareMessage {
+  min-height: 20px;
+  margin-top: 8px;
+  font-size: 14px;
+  text-align: center;
+  color: var(--muted);
+}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { getCurrentUserId } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -25,6 +26,7 @@ async function HomeContent() {
   const userId = await getCurrentUserId();
   if (!userId) return <p className="card">로그인이 필요합니다.</p>;
 
+  await connection(); // 현재 시각 기준(올해)이므로 요청 시점에 렌더링
   const year = currentKstYear();
   const recent = await prisma.attendance.findMany({
     where: { userId },

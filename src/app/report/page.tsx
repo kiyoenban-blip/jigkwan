@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { getCurrentUserId } from "@/lib/auth";
-import { prisma } from "@/lib/db";
 import { formatPercent, formatWon } from "@/lib/format";
 import { currentKstYear, toKstParts } from "@/lib/kst";
 import { EXPENSE_CATEGORY_LABELS, parseReportYear, type AnnualReport } from "@/lib/reports/annual";
-import { getAnnualReport, getReportYears } from "@/lib/reports/annual-service";
+import { getAnnualReport, getFavoriteTeam, getReportYears } from "@/lib/reports/annual-service";
+import { shareCardFileName, SHARE_CARD_SIZE } from "@/lib/share/card";
+import { createShareToken } from "@/lib/share/token";
 import { teamColor, teamName } from "@/lib/teams";
 import { BarList } from "./BarList";
 import { MonthlyChart } from "./MonthlyChart";
+import { ShareButtons } from "./ShareButtons";
 import { YearSelect } from "./YearSelect";
 import styles from "./report.module.css";
 
@@ -37,6 +40,7 @@ async function ReportContent({ searchParams }: Pick<PageProps<"/report">, "searc
   const userId = await getCurrentUserId();
   if (!userId) return <p className="card">로그인이 필요합니다.</p>;
 
+  await connection(); // 연도 기본값·"올해 지금까지"는 요청 시점 기준
   const parsed = parseReportYear(typeof rawYear === "string" ? rawYear : null);
   if (!parsed.ok) {
     return (
@@ -50,10 +54,10 @@ async function ReportContent({ searchParams }: Pick<PageProps<"/report">, "searc
   }
 
   const year = parsed.year;
-  const [report, recordedYears, user] = await Promise.all([
+  const [report, recordedYears, favoriteTeam] = await Promise.all([
     getAnnualReport(userId, year),
     getReportYears(userId),
-    prisma.user.findUnique({ where: { id: userId }, select: { favoriteTeam: true } }),
+    getFavoriteTeam(userId),
   ]);
 
   const now = new Date();
@@ -61,7 +65,6 @@ async function ReportContent({ searchParams }: Pick<PageProps<"/report">, "searc
   const yearOptions = [...new Set([thisYear, year, ...recordedYears])].sort((a, b) => b - a);
   const today = toKstParts(now);
   const period = year === thisYear ? `올해 지금까지 · ${today.month}월 ${today.day}일 기준` : `${year} 시즌 전체`;
-  const favoriteTeam = user?.favoriteTeam ?? null;
 
   return (
     <>
@@ -78,13 +81,13 @@ async function ReportContent({ searchParams }: Pick<PageProps<"/report">, "searc
       {report.attendanceCount === 0 ? (
         <EmptyReport year={year} otherYears={recordedYears.filter((y) => y !== year)} />
       ) : (
-        <ReportBody report={report} />
+        <ReportBody report={report} sharePath={`/share/${createShareToken(userId, year)}`} />
       )}
     </>
   );
 }
 
-function ReportBody({ report }: { report: AnnualReport }) {
+function ReportBody({ report, sharePath }: { report: AnnualReport; sharePath: string }) {
   const { record } = report;
   const categories = [...report.categories].sort((a, b) => b.amount - a.amount);
 
@@ -147,6 +150,26 @@ function ReportBody({ report }: { report: AnnualReport }) {
             value: s.count,
             display: `${s.count}회`,
           }))}
+        />
+      </section>
+
+      <section className="card" aria-labelledby="share-title">
+        <h2 id="share-title" className={styles.cardTitle}>
+          리포트 공유하기
+        </h2>
+        {/* eslint-disable-next-line @next/next/no-img-element -- 서버에서 만든 PNG 미리보기 */}
+        <img
+          className={styles.sharePreview}
+          src={`/api/reports/annual/card?year=${report.year}`}
+          alt={`${report.year} 직관 리포트 공유 카드 미리보기`}
+          width={SHARE_CARD_SIZE.width}
+          height={SHARE_CARD_SIZE.height}
+          loading="lazy"
+        />
+        <ShareButtons
+          imageUrl={`/api/reports/annual/card?year=${report.year}`}
+          fileName={shareCardFileName(report.year)}
+          sharePath={sharePath}
         />
       </section>
     </>

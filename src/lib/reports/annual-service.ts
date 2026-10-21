@@ -1,3 +1,4 @@
+import type { TeamCode } from "@/generated/prisma/enums";
 import { prisma } from "@/lib/db";
 import { kstYearRange, toKstParts } from "@/lib/kst";
 import { buildAnnualReport, type AnnualReport } from "@/lib/reports/annual";
@@ -35,4 +36,9 @@ export async function getReportYears(userId: string): Promise<number[]> {
   });
   const years = new Set(games.map((a) => toKstParts(a.game.startsAt).year));
   return [...years].sort((a, b) => b - a);
+}
+
+export async function getFavoriteTeam(userId: string): Promise<TeamCode | null> {
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { favoriteTeam: true } });
+  return user?.favoriteTeam ?? null;
 }

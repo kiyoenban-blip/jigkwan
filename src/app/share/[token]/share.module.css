@@ -1,0 +1,27 @@
+.page {
+  align-items: center;
+}
+
+.card,
+.placeholder {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 9 / 16;
+  border-radius: var(--radius);
+}
+
+.placeholder {
+  background: var(--border);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 52px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font-weight: 700;
+}
