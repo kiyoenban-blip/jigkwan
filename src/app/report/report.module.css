@@ -1,0 +1,326 @@
+.back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-right: 12px;
+  color: var(--muted);
+}
+
+/* 팀 색상 배경 + 어둡게 덮어 흰 글자 대비 확보 */
+.header {
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  color: #fff;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.headerMeta {
+  margin-top: 4px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.header :global(.yearSelect) select {
+  appearance: none;
+  min-height: 44px;
+  padding: 0 32px 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.2)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E")
+    no-repeat right 12px center;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+}
+
+.header :global(.yearSelect) option {
+  color: #111;
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.hero {
+  text-align: center;
+}
+
+.hero .cardTitle {
+  margin-bottom: 4px;
+}
+
+.heroValue {
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.tile {
+  padding: 14px;
+}
+
+.tileLabel {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tileValue {
+  margin-top: 2px;
+  font-size: 18px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+/* 월별 지출 세로 막대 */
+.monthly {
+  --chart-bar: #2a78d6;
+  --chart-grid: var(--border);
+}
+
+@media (prefers-color-scheme: dark) {
+  .monthly,
+  .barList {
+    --chart-bar: #3987e5;
+  }
+}
+
+.readout {
+  min-height: 24px;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.plot {
+  position: relative;
+  height: 180px;
+  padding-left: 32px;
+  padding-bottom: 24px;
+}
+
+.grid {
+  position: absolute;
+  inset: 0 0 24px 32px;
+  pointer-events: none;
+}
+
+.gridLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--chart-grid);
+}
+
+.gridLine span {
+  position: absolute;
+  right: calc(100% + 6px);
+  transform: translateY(-50%);
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.columns {
+  position: relative;
+  display: flex;
+  height: 100%;
+}
+
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 6px;
+  min-width: 0;
+}
+
+.column:focus-visible {
+  outline: 2px solid var(--chart-bar);
+  outline-offset: 2px;
+}
+
+.column[data-active] {
+  background: color-mix(in srgb, var(--chart-bar) 10%, transparent);
+}
+
+.columnTrack {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.columnBar {
+  width: min(60%, 24px);
+  min-height: 2px;
+  background: var(--chart-bar);
+  border-radius: 4px 4px 0 0;
+}
+
+.columnLabel {
+  height: 24px;
+  margin-bottom: -24px;
+  padding-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.table {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.table summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.table td:last-child,
+.table th:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 가로 막대 목록 */
+.barList {
+  --chart-bar: #2a78d6;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.barText {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.barValue {
+  color: var(--muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.barTrack {
+  height: 12px;
+}
+
+.bar {
+  height: 100%;
+  min-width: 4px;
+  background: var(--chart-bar);
+  border-radius: 0 4px 4px 0;
+}
+
+/* 빈 상태 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.emptyTitle {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-top: 8px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+.otherYears {
+  margin-top: 16px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton div {
+  height: 120px;
+  border-radius: var(--radius);
+  background: var(--border);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}

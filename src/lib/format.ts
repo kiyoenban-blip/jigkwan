@@ -9,3 +9,14 @@ export function formatWon(amount: number): string {
 export function formatPercent(ratio: number): string {
   return `${(Math.round(ratio * 1000) / 10).toFixed(1)}%`;
 }
+
+/** 축 눈금용 짧은 금액: 0 / 5천 / 1만 / 15만 / 120만 */
+export function formatCompactWon(amount: number): string {
+  if (amount === 0) return "0";
+  if (amount >= 10000) {
+    const man = amount / 10000;
+    return `${Number.isInteger(man) ? man : man.toFixed(1)}만`;
+  }
+  if (amount >= 1000) return `${Math.round(amount / 1000)}천`;
+  return String(amount);
+}
